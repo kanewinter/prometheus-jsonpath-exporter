@@ -71,7 +71,9 @@ Metrics will available in http://localhost:9158
 
 ```
 $ curl -s localhost:9158 | grep ^kong
-kong_cluster_total_nodes 3.0
-kong_cluster_alive_nodes 2.0
+kong_cluster_total_nodes{tag="kong_cluster_1"} 3.0
+kong_cluster_alive_nodes{tag="kong_cluster_1"} 2.0
+kong_cluster_total_nodes{tag="kong_cluster_2"} 3.0
+kong_cluster_alive_nodes{tag="kong_cluster_2"} 2.0
 ```
 
