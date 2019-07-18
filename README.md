@@ -6,9 +6,13 @@ Converts json data from a http url into prometheus metrics using jsonpath
 ### Config
 
 ```yml
-exporter_port: 9158 # Port on which prometheus can call this exporter to get metrics
+exporter_port: 9158 # Port on which prometheu can call this exporter to get metrics
 log_level: info
-json_data_url: http://stubonweb.herokuapp.com/kong-cluster-status # Url to get json data used for fetching metric values
+json_data_urls:
+- url: http://stubonweb.herokuapp.com/kong-cluster-status # Url to get json data used for fetching metric values
+  label: kong_cluster_1
+- url: http://stubonweb.herokuapp.com/kong-cluster-status # Url to get json data used for fetching metric values
+  label: kong_cluster_2
 metric_name_prefix: kong_cluster # All metric names will be prefixed with this value
 metrics:
 - name: total_nodes # Final metric name will be kong_cluster_total_nodes
@@ -71,7 +75,9 @@ Metrics will available in http://localhost:9158
 
 ```
 $ curl -s localhost:9158 | grep ^kong
-kong_cluster_total_nodes 3.0
-kong_cluster_alive_nodes 2.0
+kong_cluster_total_nodes{tag="kong_cluster_1"} 3.0
+kong_cluster_alive_nodes{tag="kong_cluster_1"} 2.0
+kong_cluster_total_nodes{tag="kong_cluster_2"} 3.0
+kong_cluster_alive_nodes{tag="kong_cluster_2"} 2.0
 ```
 

@@ -19,16 +19,19 @@ class JsonPathCollector(object):
 
   def collect(self):
     config = self._config
-    result = json.loads(urllib2.urlopen(config['json_data_url'], timeout=10).read())
-    result_tree = Tree(result)
-    for metric_config in config['metrics']:
-      metric_name = "{}_{}".format(config['metric_name_prefix'], metric_config['name'])
-      metric_description = metric_config.get('description', '')
-      metric_path = metric_config['path']
-      value = result_tree.execute(metric_path)
-      logging.debug("metric_name: {}, value for '{}' : {}".format(metric_name, metric_path, value))
-      metric = GaugeMetricFamily(metric_name, metric_description, value=value)
-      yield metric
+    endpoints = config['json_data_urls']
+    for endpoint in endpoints:
+      result = json.loads(urllib2.urlopen(endpoint['url'], timeout=10).read())
+      result_tree = Tree(result)
+      for metric_config in config['metrics']:
+        metric_name = "{}_{}".format(config['metric_name_prefix'], metric_config['name'])
+        metric_description = metric_config.get('description', '')
+        metric_path = metric_config['path']
+        value = result_tree.execute(metric_path)
+        logging.debug("metric_name: {}, value for '{}' : {}".format(metric_name, metric_path, value))
+        metric = GaugeMetricFamily(metric_name, metric_description, labels=["tag"])
+        metric.add_metric([endpoint['label']], value)
+        yield metric
 
 
 if __name__ == "__main__":
